@@ -86,6 +86,28 @@ public class MyLinkedList<E> implements List<E> {
 	@Override
 	public void add(int index, E element) {
 		// TODO: fill this in
+        int s = size();
+        Node insert = new Node(element);
+        if (index < 0 || index > s) {
+            throw new IndexOutOfBoundsException();
+        }
+		if (head == null && index == 0) {
+			head = insert;
+        } else if (index == s) {
+            Node prev = getNode(index-1);
+            prev.next = insert;
+        } else {
+            Node after = getNode(index);
+            if (index == 0) {
+                insert.next = after;
+                head = insert;
+		    } else if (head != null) {
+                Node prev = getNode(index-1);
+                insert.next = after;
+                prev.next = insert;
+            }
+        }
+		size++;
 	}
 
 	@Override
@@ -147,7 +169,19 @@ public class MyLinkedList<E> implements List<E> {
 	@Override
 	public int indexOf(Object target) {
 		// TODO: fill this in
-		return -1;
+		if (head == null) {
+			return -1;
+		} else {
+            int index = 0;
+            Node node=head;
+		    for (; node != null; node = node.next) {
+                if (equals(target, node.cargo)) {
+                    return index;
+                }
+                index = index + 1;
+            }
+            return -1;
+		}
 	}
 
 	/** Checks whether an element of the array is the target.
@@ -202,13 +236,49 @@ public class MyLinkedList<E> implements List<E> {
 	@Override
 	public boolean remove(Object obj) {
 		// TODO: fill this in
+        if (equals(head.cargo, obj)) {
+            head = head.next;
+		    size--;
+            return true;
+        }
+        Node prev = head;
+        for (Node temp = head.next; temp != null; temp = temp.next) {
+            if (equals(temp.cargo, obj)) {
+                prev.next = temp.next;
+		        size--;
+                return true;
+            }
+            prev = prev.next;
+        }
 		return false;
 	}
 
 	@Override
 	public E remove(int index) {
 		// TODO: fill this in
-		return null;
+        int s = size();
+        if (index < 0 || index >= s) {
+            throw new IndexOutOfBoundsException();
+        } else if (index == 0) {
+            E rtn = head.cargo;
+            head = head.next;
+		    size--;
+            return rtn;
+        } else {
+            Node prev = head;
+            Node curr = head.next;
+            for (int i = 1; i < s; i++) {
+                if (i == index) {
+                    E rtn = curr.cargo;
+                    prev.next = curr.next;
+		            size--;
+                    return rtn;
+                }
+                prev = prev.next;
+                curr = curr.next;
+            }
+        }
+        return null;
 	}
 
 	@Override
